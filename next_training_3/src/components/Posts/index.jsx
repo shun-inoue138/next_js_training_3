@@ -1,19 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
-import useSWR from 'swr';
-
-const fetcher = async (url) => {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error('エラー発生');
-  }
-  const json = await res.json();
-  return json;
-};
+import { useFetch } from '../../hooks/useFetch.js';
 
 const Posts = () => {
-  const { data, error } = useSWR(
-    'https://jsonplaceholder.typicode.com/post',
-    fetcher
+  const { data, error, isLoading, isEmpty } = useFetch(
+    'https://jsonplaceholder.typicode.com/posts'
   );
   console.log({ error, data });
 
@@ -40,13 +30,13 @@ const Posts = () => {
   //   // };
   // }, [getPosts]);
 
-  if (!data && !error) {
+  if (isLoading) {
     return <div>ロード中です</div>;
   }
   if (error) {
     return <div>{error}</div>;
   }
-  if (data.length === 0) {
+  if (isEmpty) {
     return <div>データが空です</div>;
   }
 
