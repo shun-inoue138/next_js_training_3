@@ -2,23 +2,14 @@ import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import { useEffect, useCallback, useState } from 'react';
+import Posts from '../src/components/Posts';
 
 export default function Home({ foo }) {
-  const [posts, setPosts] = useState([]);
-  const getPosts = useCallback(async () => {
-    const res = await fetch('https://jsonplaceholder.typicode.com/postss');
-    const json = await res.json();
-    console.log(json);
-    setPosts(json);
-    console.log(posts);
-  }, []);
-  useEffect(() => {
-    getPosts();
-    // return () => {
-    //   cleanup;
-    // };
-  }, [getPosts]);
-
+  const [postData, setPostData] = useState({
+    posts: [],
+    isLoading: false,
+    error: '',
+  });
   return (
     <div className={styles.container}>
       <Head>
@@ -27,13 +18,7 @@ export default function Home({ foo }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {posts.length ? (
-        <ol>
-          {posts.map((post) => {
-            return <li key={post.id}>{post.title}</li>;
-          })}
-        </ol>
-      ) : null}
+      <Posts {...{ postData, setPostData }} />
 
       <footer className={styles.footer}>
         <a
