@@ -1,25 +1,19 @@
 import React, { useCallback, useEffect } from 'react';
 
-const Posts = ({ postData: { posts, isLoading, error }, setPostData }) => {
+const Posts = ({ state: { posts, isLoading, error }, dispatch }) => {
   const getPosts = useCallback(async () => {
     try {
-      setPostData((prevData) => {
-        return { ...prevData, isLoading: true };
-      });
+      dispatch({ type: 'start' });
       const res = await fetch('https://jsonplaceholder.typicode.com/posts');
       if (!res.ok) {
         throw new Error('データを取得できませんでした。');
       }
       const json = await res.json();
       console.log(json);
-      setPostData((prevData) => {
-        return { ...prevData, posts: json, isLoading: false };
-      });
+      dispatch({ type: 'end', posts: json });
       console.log(posts);
     } catch (error) {
-      setPostData((prevData) => {
-        return { ...prevData, isLoading: false, error: error.message };
-      });
+      dispatch({ type: 'error', error: error.message });
     }
   }, []);
 

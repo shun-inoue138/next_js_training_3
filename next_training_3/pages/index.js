@@ -1,15 +1,41 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useReducer } from 'react';
 import Posts from '../src/components/Posts';
 
+const initialState = {
+  posts: [],
+  isLoading: false,
+  error: '',
+};
+
 export default function Home({ foo }) {
-  const [postData, setPostData] = useState({
-    posts: [],
-    isLoading: false,
-    error: '',
-  });
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case 'start':
+        return {
+          ...state,
+          isLoading: true,
+        };
+      case 'end':
+        return {
+          ...state,
+          isLoading: false,
+          posts: action.posts,
+        };
+      case 'error':
+        return {
+          ...state,
+          isLoading: false,
+          error: action.error,
+        };
+
+      default:
+        break;
+    }
+  };
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <div className={styles.container}>
       <Head>
@@ -18,7 +44,7 @@ export default function Home({ foo }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Posts {...{ postData, setPostData }} />
+      <Posts {...{ state, dispatch }} />
 
       <footer className={styles.footer}>
         <a
